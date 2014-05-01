@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+  
+{% block content %}
+
+    <h1>Magnet</h1>
+    
+    {% if url is defined %}
+    	
+    	<a href='{{ url }}'> {{url}} </a>
+    
+    {% endif %}
+
+{% endblock %}
