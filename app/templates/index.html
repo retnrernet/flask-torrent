@@ -3,10 +3,11 @@
 {% block content %}
 
 <h1>Index</h1>
+
 <ul class="nav nav-tabs nav-stacked">
-<li><a href="/list/S/movies">list Movies by Seeders</a></li> 
-<li><a href="/list/S/tv">list TV by Seeders</a></li>
-<li><a href="/list/P/movies">list Movies by Peers</a></li>
-<li><a href="/list/P/tv">list TV by Peers</a></li>
+	<li><a href="{{ url_for('listBy', peer_seeds='S', tv_movies='movies') }}">list Movies by Seeders</a></li> 
+	<li><a href="{{ url_for('listBy', peer_seeds='S', tv_movies='tv') }}">list TV by Seeders</a></li>
+	<li><a href="{{ url_for('listBy', peer_seeds='P', tv_movies='movies') }}">list Movies by Peers</a></li>
+	<li><a href="{{ url_for('listBy', peer_seeds='P', tv_movies='tv') }}">list TV by Peers</a></li>
 </ul>
 {% endblock %}
