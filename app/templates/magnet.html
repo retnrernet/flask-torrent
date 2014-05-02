@@ -4,10 +4,12 @@
 
     <h1>Magnet</h1>
     
+    <ul class="nav nav-tabs nav-stacked">
     {% if url is defined %}
     	
-    	<a href='{{ url }}'> {{url}} </a>
+    	<li><a href='{{ url }}'>download</a></li>
     
     {% endif %}
+	</ul>
 
 {% endblock %}

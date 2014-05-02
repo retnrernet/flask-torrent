@@ -7,7 +7,7 @@
   <ul class="nav nav-tabs nav-stacked">
   {% for url in urls %}
 
-    <li><a href='/magnet{{url.torrenthash}}'>magnet - {{ url.title }} </a></li>
+    <li><a href='/magnet{{url.torrenthash}}'>{{ url.title }}</a></li>
 
   {% endfor %}
   </ul>
