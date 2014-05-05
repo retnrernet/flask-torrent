@@ -4,7 +4,9 @@
 {% endblock %} 
 
 {% block title %}
-	<h1>Magnet</h1>
+	<div class="page-header">
+	  <h1>Torrents <small>Magnet link</small></h1>
+	</div>
 {% endblock %}
 
 {% block search %}
@@ -19,14 +21,11 @@
 		<li class="active">Download</li>
 	</ul>
 
-	<!-- results -->
-	<ul class="nav nav-tabs nav-stacked">
 	{% if url is defined and url is not none %}
-		<li><a href='{{ url }}'>download</a></li>
+		<a href='{{ url }}' class="btn btn-primary">download</a>
 	{% else %}
 		<p>Unable to find a magnet link</p>
 	{% endif %}
-	</ul>
 
 {% endblock %}
 

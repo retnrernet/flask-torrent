@@ -13,10 +13,30 @@
 
     {% block search %}
       <div class="container">
+        <div class="btn-group">
+          
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">Show
+            <span class="caret"></span>
+          </a>
+          
+          <ul class="dropdown-menu">
+            <li><a href="{{ url_for('listBy', peer_seeds='N', tv_movies='tv') }}">TV sorted by Rating</a></li>
+            <li><a href="{{ url_for('listBy', peer_seeds='D', tv_movies='tv') }}">TV sorted by Date</a></li>
+            <li><a href="{{ url_for('listBy', peer_seeds='S', tv_movies='tv') }}">TV sorted by Size</a></li>
+            <li><a href="{{ url_for('listBy', peer_seeds='P', tv_movies='tv') }}">TV sorted by Peers</a></li>
+            <li><a href="{{ url_for('listBy', peer_seeds='N', tv_movies='movies') }}">Movies sorted by Rating</a></li> 
+            <li><a href="{{ url_for('listBy', peer_seeds='D', tv_movies='movies') }}">Movies sorted by Date</a></li>
+            <li><a href="{{ url_for('listBy', peer_seeds='S', tv_movies='movies') }}">Movies sorted by Size</a></li>
+            <li><a href="{{ url_for('listBy', peer_seeds='P', tv_movies='movies') }}">Movies sorted by Peers</a></li>
+          </ul>
+        
+        </div>
+        
         <form class="navbar-form pull-right" data-url="{{ url_for('search', query='') }}">
           <input type="text" class="span2">
           <button type="submit" class="btn btn-primary">Search</button>
         </form>
+      
       </div>
       <br>
     {% endblock %}
