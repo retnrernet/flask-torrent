@@ -1,15 +1,34 @@
 {% extends "base.html" %}
-  
+
+{% block style %}
+{% endblock %} 
+
+{% block title %}
+	<h1>Magnet</h1>
+{% endblock %}
+
+{% block search %}
+{% endblock %}
+
 {% block content %}
 
-    <h1>Magnet</h1>
-    
-    <ul class="nav nav-tabs nav-stacked">
-    {% if url is defined %}
-    	
-    	<li><a href='{{ url }}'>download</a></li>
-    
-    {% endif %}
+	<!-- breadcrumb -->
+	<ul class="breadcrumb">
+		<li><a href="{{ url_for('listBy') }}">Home</a> <span class="divider">/</span></li>
+		<li class="active">List <span class="divider">/</span></li>
+		<li class="active">Download</li>
 	</ul>
 
+	<!-- results -->
+	<ul class="nav nav-tabs nav-stacked">
+	{% if url is defined and url is not none %}
+		<li><a href='{{ url }}'>download</a></li>
+	{% else %}
+		<p>Unable to find a magnet link</p>
+	{% endif %}
+	</ul>
+
+{% endblock %}
+
+{% block script %}
 {% endblock %}

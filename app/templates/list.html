@@ -1,15 +1,35 @@
 {% extends "base.html" %}
 
+{% block style %}
+{% endblock %}
+
+{% block title %}
+	<h1>Torrents</h1>
+{% endblock %}
+
 {% block content %}
+	
+	<!-- breadcrumb -->
+	<ul class="breadcrumb">
+		<li><a href="{{ url_for('listBy') }}">Home</a> <span class="divider">/</span></li>
+		<li class="active">List</li>
+	</ul>
 
-  <h1>Top Torrents</h1>
+	<!-- result -->
+	<ul class="nav nav-tabs nav-stacked">
+	{% for url in urls %}
 
-  <ul class="nav nav-tabs nav-stacked">
-  {% for url in urls %}
+		<li>
+			<a href='/magnet{{url.torrenthash}}'>{{ url.title }}
+			{% if '1080p' in url.title %}
+				<span class="label label-success">1080p</span>
+			{% elif '720p' or 'HDTV' in url.title %}
+				<span class="label label-warning">720p</span>
+			{% endif %}
+			</a>
+		</li>
 
-    <li><a href='/magnet{{url.torrenthash}}'>{{ url.title }}</a></li>
-
-  {% endfor %}
-  </ul>
+	{% endfor %}
+	</ul>
 
 {% endblock %}
