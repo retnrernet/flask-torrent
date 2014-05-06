@@ -14,3 +14,6 @@ Simple torrent site that scapes content from torrentz.eu
 * requests==2.2.1
 * wsgiref==0.1.2
 
+# Demo
+
+Checkout the [demo on heroku](http://t0rrents.herokuapp.com/ "demo on heroku")
