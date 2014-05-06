@@ -120,7 +120,7 @@ def getTagCloud():
 		links = div.findAll('a')
 		for link in links:
 			lnk = TagCloudLink()
-			lnk.url = link['href']
+			lnk.url = link['href'].replace('magnet','search')
 			lnk.name = link.text
 			lnk.font_size = link['style']
 			urllist.append(lnk)
