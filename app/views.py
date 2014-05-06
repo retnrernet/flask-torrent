@@ -13,18 +13,26 @@ def listBy(peer_seeds=None, tv_movies=None):
 		)
 	return render_template("list.html", 
 		urls=listTorrents(None, None, 'added:7d'), 
-		title=getPageTitle(None, None, 'added:7d')
+		title=getPageTitle(None, None, 'added:7d'),
+		cloud=getTagCloud()
 	)
 
 @app.route('/magnet/<url>')
 def magnet(url):
-	return render_template("magnet.html", url=downloadTorrent(url))
+	return render_template("magnet.html", link=downloadTorrent(url))
 
 @app.route('/search/<query>')
 def search(query):
 	return render_template("list.html", 
 		urls=listTorrents(None, None, query), 
 		title=getPageTitle(None, None, query)
+	)
+
+@app.route('/cloud')
+def cloud():
+	return render_template("cloud.html",
+		urls=getTagCloud(),
+		title='Tag Cloud'
 	)
 
 def getPageTitle(peer_seeds=None, tv_movies=None, query=None):
@@ -70,13 +78,25 @@ def downloadTorrent(h):
 	for x in dt:
 		if '1337x' in x['href']:
 			magnet = extractMagnet('1337x',x['href'])
-			if magnet and magnet['href']: return magnet['href']		
+			if magnet and magnet['href']:
+				link = Link()
+				link.url = magnet['href']
+				link.mirror = '1337x.to'
+				return link
 		if 'kickass' in x['href']:
 			magnet = extractMagnet('kickass',x['href'])
-			if magnet and magnet['href']: return magnet['href']
+			if magnet and magnet['href']:
+				link = Link()
+				link.url = magnet['href']
+				link.mirror = 'kickass.to'
+				return link
 		if 'katproxy' in x['href']:
 			magnet = extractMagnet('kickass',x['href'])
-			if magnet and magnet['href']: return magnet['href']
+			if magnet and magnet['href']:
+				link = Link()
+				link.url = magnet['href']
+				link.mirror = 'katproxy.com'
+				return link
 	return None
 
 def extractMagnet(site,x):
@@ -90,6 +110,37 @@ def extractMagnet(site,x):
 		soup = BeautifulSoup(r.text)
 		magnet = soup.find('a', attrs={'class':'magnetlinkButton'})
 		return magnet
+
+def getTagCloud():
+	r = requests.get('http://torrentz.eu/i')
+	soup = BeautifulSoup(r.text)
+	dt = soup.findAll('div',attrs={'class':'cloud'})
+	urllist = []
+	for div in dt:
+		links = div.findAll('a')
+		for link in links:
+			lnk = TagCloudLink()
+			lnk.url = link['href']
+			lnk.name = link.text
+			lnk.font_size = link['style']
+			urllist.append(lnk)
+	return urllist
+
+class TagCloudLink(object):
+	def __init__(self,url=None, name=None, font_size=None):
+		if url:
+			self.url = url
+		if name:
+			self.name = name
+		if font_size:
+			self.font_size = font_size
+
+class Link(object):
+	def __init__(self,url=None, mirror=None):
+		if url:
+			self.url = url
+		if mirror:
+			self.mirror = mirror
 
 class Torrent(object):
 	def __init__(self,url=None, torrenthash=None, title=None):

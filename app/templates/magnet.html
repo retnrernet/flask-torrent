@@ -21,8 +21,8 @@
 		<li class="active">Download</li>
 	</ul>
 
-	{% if url is defined and url is not none %}
-		<a href='{{ url }}' class="btn btn-primary">download</a>
+	{% if link is defined and link is not none %}
+		<a href='{{ link.url }}' class="btn btn-primary">download from {{ link.mirror }} </a>
 	{% else %}
 		<p>Unable to find a magnet link</p>
 	{% endif %}
