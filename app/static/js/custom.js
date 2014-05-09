@@ -1,7 +1,7 @@
 $('.navbar-form .btn').click(function(e){
   e.preventDefault();
-  var url   = $('.navbar-form').attr('data-url');
-  var query = $('.navbar-form .span2').val();
+  var url   = '/search/';
+  var query = $('.form-control').val();
   if(url.length > 0 && query.length > 0){
     document.location = url + query;
   }
