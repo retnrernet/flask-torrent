@@ -25,7 +25,10 @@ def recent():
 
 @app.route('/magnet/<url>')
 def magnet(url):
-	return render_template("magnet.html", link=downloadTorrent(url))
+	return render_template("magnet.html", 
+		link=downloadTorrent(url),
+		title='Download'
+	)
 
 @app.route('/search/<query>')
 def search(query):
@@ -56,7 +59,7 @@ def getPageTitle(peer_seeds=None, tv_movies=None, query=None):
 			if tv_movies == 'tv': return 'TV sorted by Peers'
 			else: return 'Movies sorted by Peers'
 	elif query != 'added:7d': return 'Search results for %s' % query
-	elif query == 'added:7d': return '	Last week\'s favorites'
+	elif query == 'added:7d': return 'Last week\'s favorites'
 	else: return 'Torrents'
 
 def listTorrents(peer_seeds=None, tv_movies=None, query=None):
