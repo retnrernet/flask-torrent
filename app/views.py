@@ -45,19 +45,14 @@ def cloud():
 	)
 
 def getPageTitle(peer_seeds=None, tv_movies=None, query=None):
+	options = {
+	'N':{'tv':'TV sorted by Rating','movies':'Movies sorted by Rating'},
+	'D':{'tv':'TV sorted by Date','movies':'Movies sorted by Date'},
+	'S':{'tv':'TV sorted by Size','movies':'Movies sorted by Size'},
+	'P':{'tv':'TV sorted by Peers','movies':'Movies sorted by Peers'}
+	}
 	if peer_seeds and tv_movies:
-		if peer_seeds == 'N':
-			if tv_movies == 'tv': return 'TV sorted by Rating'
-			else: return 'Movies sorted by Rating'
-		elif peer_seeds == 'D':
-			if tv_movies == 'tv': return 'TV sorted by Date'
-			else: return 'Movies sorted by Date'
-		elif peer_seeds == 'S':
-			if tv_movies == 'tv': return 'TV sorted by Size'
-			else: return 'Movies sorted by Size'
-		elif peer_seeds == 'P':
-			if tv_movies == 'tv': return 'TV sorted by Peers'
-			else: return 'Movies sorted by Peers'
+		return options[peer_seeds][tv_movies]
 	elif query != 'added:7d': return 'Search results for %s' % query
 	elif query == 'added:7d': return 'Last week\'s favorites'
 	else: return 'Torrents'
