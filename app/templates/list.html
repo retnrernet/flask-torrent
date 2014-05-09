@@ -4,40 +4,22 @@
 {% endblock %}
 
 {% block title %}
-	<div class="page-header">
-	  <h1>Torrents <small>{% if title is defined %} {{ title }} {% endif %}</small></h1>
-	</div>
+<div class="page-header">
+	<h1>{% if title is defined %} {{ title }} {% endif %}</h1>
+</div>
 {% endblock %}
 
 {% block content %}
-	
-	<!-- breadcrumb -->
-	<ul class="breadcrumb">
-		<li><a href="{{ url_for('listBy') }}">Home</a> <span class="divider">/</span></li>
-		<li class="active">List</li>
-	</ul>
-
-	<ul class="nav nav-tabs nav-stacked">
-	{% for link in cloud %}
-		<a href='/search/{{link.name}}' style='{{link.font_size}}'>{{link.name}}</a>
-	{% endfor %}
-	</ul>
-
-	<!-- result -->
-	<ul class="nav nav-tabs nav-stacked">
-	{% for url in urls %}
-
-		<li>
-			<a href='/magnet{{url.torrenthash}}'>{{ url.title }}
-			{% if '1080p' in url.title %}
-				<span class="label label-success">1080p</span>
-			{% elif '720p' or 'HDTV' in url.title %}
-				<span class="label label-warning">720p</span>
-			{% endif %}
-			</a>
-		</li>
-
-	{% endfor %}
-	</ul>
-
+<ul class="list-group">
+{% for url in urls %}
+	<li class="list-group-item">
+	<a href='/magnet{{url.torrenthash}}'>{{ url.title }}</a>
+	{% if '1080p' in url.title %}
+		<span class="label label-success">1080p</span>
+	{% elif '720p' or 'HDTV' in url.title %}
+		<span class="label label-warning">720p</span>
+	{% endif %}
+	</li>
+{% endfor %}
+</ul>
 {% endblock %}

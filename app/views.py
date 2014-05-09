@@ -12,9 +12,15 @@ def listBy(peer_seeds=None, tv_movies=None):
 			title=getPageTitle(peer_seeds, tv_movies, None)
 		)
 	return render_template("list.html", 
+		urls=listTorrents('P', 'tv', None), 
+		title=getPageTitle('P', 'tv', None)
+	)
+
+@app.route('/recent')
+def recent():
+	return render_template("list.html", 
 		urls=listTorrents(None, None, 'added:7d'), 
-		title=getPageTitle(None, None, 'added:7d'),
-		cloud=getTagCloud()
+		title=getPageTitle(None, None, 'added:7d')
 	)
 
 @app.route('/magnet/<url>')
