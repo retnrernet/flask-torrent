@@ -1,4 +1,4 @@
-$('.navbar-form .btn').click(function(e){
+$('.navbar-form').submit(function(e){
   e.preventDefault();
   var url   = '/search/';
   var query = $('.form-control').val();
