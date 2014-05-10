@@ -13,12 +13,27 @@
 <ul class="list-group">
 {% for url in urls %}
 	<li class="list-group-item">
-	<a href='/magnet{{url.torrenthash}}'>{{ url.title }}</a>
+	{% if url.torrenthash and url.title %}
+	<a href='/magnet{{url.torrenthash}}'>{{ url.title|truncate(100) }}</a>
 	{% if '1080p' in url.title %}
 		<span class="label label-success">1080p</span>
 	{% elif '720p' or 'HDTV' in url.title %}
 		<span class="label label-warning">720p</span>
 	{% endif %}
+	{% endif %}
+	
+	{% if url.mb %}
+	<span class="badge alert-warning">Size: {{url.mb}}</span>
+	{% endif %}
+
+	{% if url.leechers %}
+	<span class="badge alert-info">Leechers: {{url.leechers}}</span>
+	{% endif %}
+
+	{% if url.seeds %}
+	<span class="badge alert-success">Seeds: {{url.seeds }}</span>
+	{% endif %}
+	
 	</li>
 {% endfor %}
 </ul>

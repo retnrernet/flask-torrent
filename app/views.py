@@ -62,17 +62,29 @@ def listTorrents(peer_seeds=None, tv_movies=None, query=None):
 		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies)
 	elif query:
 		r = requests.get('http://torrentz.eu/search?f='+query)
-	else: return
-	soup = BeautifulSoup(r.text)
-	dt = soup.findAll('a', attrs={'title':None, 'rel':None})
+	else: return []
 	urllist = []
-	for x in dt:
-		if len(x['href']) > 40: 
-			tor = Torrent()
-			tor.url = 'http://torrentz.eu'
-			tor.torrenthash = x['href']
-			tor.title = x.text
-			urllist.append(tor)
+	soup = BeautifulSoup(r.text)
+	dls = soup.findAll('dl')
+	for dl in dls:
+		a = dl.find('a')
+		if a and len(a['href']) > 40 and a.text:
+			dd = dl.find('dd')
+			if dd:
+				mb = dd.find('span', attrs={'class':'s'})
+				seeds = dd.find('span', attrs={'class':'u'})
+				leechers = dd.find('span', attrs={'class':'d'})
+				tor = Torrent()
+				tor.url = 'http://torrentz.eu'
+				tor.torrenthash = a['href']
+				tor.title = a.text
+				if mb and mb.string:
+					tor.mb = mb.string
+				if seeds and seeds.string:
+					tor.seeds = seeds.string
+				if leechers and leechers.string:
+					tor.leechers = leechers.string
+				urllist.append(tor)
 	return urllist
 
 def downloadTorrent(h):
@@ -147,10 +159,16 @@ class Link(object):
 			self.mirror = mirror
 
 class Torrent(object):
-	def __init__(self,url=None, torrenthash=None, title=None):
+	def __init__(self,url=None, torrenthash=None, title=None, mb=None, leechers=None, seeds=None):
 		if url:
 			self.url = url
 		if torrenthash:
 			self.torrenthash = torrenthash
 		if title:
 			self.title = title
+		if mb:
+			self.mb = mb
+		if leechers:
+			self.leechers = leechers
+		if seeds:
+			self.seeds = seeds
