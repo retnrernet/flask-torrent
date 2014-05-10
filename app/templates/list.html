@@ -15,25 +15,25 @@
 	<li class="list-group-item">
 	{% if url.torrenthash and url.title %}
 	<a href='/magnet{{url.torrenthash}}'>{{ url.title|truncate(100) }}</a>
-	{% if '1080p' in url.title %}
-		<span class="label label-success">1080p</span>
-	{% elif '720p' or 'HDTV' in url.title %}
-		<span class="label label-warning">720p</span>
-	{% endif %}
 	{% endif %}
 	
 	{% if url.mb %}
-	<span class="badge alert-warning hidden-xs">Size: {{url.mb}}</span>
+	<span class="badge alert-warning hidden-sm hidden-xs">{{url.mb}}</span>
 	{% endif %}
 
 	{% if url.leechers %}
-	<span class="badge alert-info hidden-xs">Leechers: {{url.leechers}}</span>
+	<span class="badge alert-info hidden-sm hidden-xs">Leechers: {{url.leechers}}</span>
 	{% endif %}
 
 	{% if url.seeds %}
-	<span class="badge alert-success hidden-xs">Seeds: {{url.seeds }}</span>
+	<span class="badge alert-success hidden-sm hidden-xs">Seeds: {{url.seeds }}</span>
 	{% endif %}
-	
+
+	{% if '1080p' in url.title %}
+	<span class="label label-success hidden-sm hidden-xs">1080p</span>
+	{% elif '720p' or 'HDTV' in url.title %}
+	<span class="label label-warning hidden-sm hidden-xs">720p</span>
+	{% endif %}
 	</li>
 {% endfor %}
 </ul>

@@ -12,3 +12,6 @@ body {
 .page-header h1 {
 	color:#777;
 }
+.list-group-item {
+	padding:5px 5px 5px 5px;
+}
