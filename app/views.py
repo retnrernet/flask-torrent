@@ -5,36 +5,42 @@ from BeautifulSoup import BeautifulSoup
 
 @app.route('/')
 @app.route('/list/<peer_seeds>/<tv_movies>')
-def listBy(peer_seeds=None, tv_movies=None):
-	if peer_seeds and tv_movies:
-		return render_template("list.html", 
-			urls=listTorrents(peer_seeds,tv_movies, None), 
-			title=getPageTitle(peer_seeds, tv_movies, None)
-		)
+@app.route('/list/<peer_seeds>/<tv_movies>/<page>')
+def listBy(peer_seeds=None, tv_movies=None, page=None):
+	if peer_seeds is None: peer_seeds = 'P'
+	if tv_movies is None: tv_movies = 'tv'
+	data = listTorrents(peer_seeds,tv_movies, None, page)
 	return render_template("list.html", 
-		urls=listTorrents('P', 'tv', None), 
-		title=getPageTitle('P', 'tv', None)
+		urls=data['urls'],
+		title=getPageTitle(peer_seeds, tv_movies, None),
+		pagination=data['pagination']
 	)
 
 @app.route('/recent')
-def recent():
+@app.route('/recent/<page>')
+def recent(page=None):
+	data = listTorrents(None, None, 'added:7d', page)
 	return render_template("list.html", 
-		urls=listTorrents(None, None, 'added:7d'), 
-		title=getPageTitle(None, None, 'added:7d')
+		urls=data['urls'],
+		title=getPageTitle(None, None, 'added:7d'),
+		pagination=data['pagination']
 	)
 
 @app.route('/magnet/<url>')
 def magnet(url):
 	return render_template("magnet.html", 
-		link=downloadTorrent(url),
+		link=getMagnetLink(url),
 		title='Download'
 	)
 
 @app.route('/search/<query>')
-def search(query):
+@app.route('/search/<query>/<page>')
+def search(query, page=None):
+	data = listTorrents(None, None, query, page)
 	return render_template("list.html", 
-		urls=listTorrents(None, None, query), 
-		title=getPageTitle(None, None, query)
+		urls=data['urls'],
+		title=getPageTitle(None, None, query),
+		pagination=data['pagination']
 	)
 
 @app.route('/cloud')
@@ -44,27 +50,75 @@ def cloud():
 		title='Tag Cloud'
 	)
 
+def listTorrents(peer_seeds=None, tv_movies=None, query=None, page=None):
+	if peer_seeds and tv_movies and not page:
+		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies)
+	elif peer_seeds and tv_movies and page:
+		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies+'&p='+page)
+		print r.url
+	elif query and not page:
+		r = requests.get('http://torrentz.eu/search?f='+query)
+	elif query and page:
+		r = requests.get('http://torrentz.eu/search?f='+query+'&p='+page)
+	else: return []
+	data = getPaginatedList(r,query)
+	return data
+
 def getPageTitle(peer_seeds=None, tv_movies=None, query=None):
 	options = {
-	'N':{'tv':'TV sorted by Rating','movies':'Movies sorted by Rating'},
-	'D':{'tv':'TV sorted by Date','movies':'Movies sorted by Date'},
-	'S':{'tv':'TV sorted by Size','movies':'Movies sorted by Size'},
-	'P':{'tv':'TV sorted by Peers','movies':'Movies sorted by Peers'}
+		'N':{'tv':'TV sorted by Rating','movies':'Movies sorted by Rating'},
+		'D':{'tv':'TV sorted by Date','movies':'Movies sorted by Date'},
+		'S':{'tv':'TV sorted by Size','movies':'Movies sorted by Size'},
+		'P':{'tv':'TV sorted by Peers','movies':'Movies sorted by Peers'},
+		'True':'Search results for %s' % query,
+		'False':'Last week\'s favorites'
 	}
 	if peer_seeds and tv_movies:
 		return options[peer_seeds][tv_movies]
-	elif query != 'added:7d': return 'Search results for %s' % query
-	elif query == 'added:7d': return 'Last week\'s favorites'
+	if query:
+		return options[str(query != 'added:7d')]
 	else: return 'Torrents'
 
-def listTorrents(peer_seeds=None, tv_movies=None, query=None):
-	if peer_seeds and tv_movies:
-		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies)
-	elif query:
-		r = requests.get('http://torrentz.eu/search?f='+query)
-	else: return []
+def getMagnetLink(h):
+	options = {
+		'1337x':'1337x.to',
+		'kickass':'kickass.to',
+		'katproxy':'katproxy.com'
+	}
+	r = requests.get('http://torrentz.eu/'+h)
+	soup = BeautifulSoup(r.text)
+	dt = soup.findAll('a', attrs={'rel':'e'})
+	for x in dt:
+		for option in options:
+			if option in x['href']:
+				magnet = extractMagnet(option,x['href'])
+				if magnet and magnet['href']:
+					link = Link()
+					link.url = magnet['href']
+					link.mirror = options[option]
+					return link
+	return None
+
+def getTagCloud():
+	r = requests.get('http://torrentz.eu/i')
+	soup = BeautifulSoup(r.text)
+	dt = soup.find('div',attrs={'class':'cloud'})
+	urllist = []
+	links = dt.findAll('a')
+	for link in links:
+		lnk = TagCloudLink()
+		lnk.url = link['href'].rsplit('/',1)[1]
+		lnk.name = link.text
+		lnk.font_size = link['style']
+		urllist.append(lnk)
+	return urllist
+
+def getPaginatedList(r,query):
 	urllist = []
 	soup = BeautifulSoup(r.text)
+	if query:
+		pagination = getPagination(soup,query)
+	else: pagination = getPagination(soup)
 	dls = soup.findAll('dl')
 	for dl in dls:
 		a = dl.find('a')
@@ -85,90 +139,76 @@ def listTorrents(peer_seeds=None, tv_movies=None, query=None):
 				if leechers and leechers.string:
 					tor.leechers = leechers.string
 				urllist.append(tor)
-	return urllist
-
-def downloadTorrent(h):
-	r = requests.get('http://torrentz.eu/'+h)
-	soup = BeautifulSoup(r.text)
-	dt = soup.findAll('a', attrs={'rel':'e'})
-	for x in dt:
-		if '1337x' in x['href']:
-			magnet = extractMagnet('1337x',x['href'])
-			if magnet and magnet['href']:
-				link = Link()
-				link.url = magnet['href']
-				link.mirror = '1337x.to'
-				return link
-		if 'kickass' in x['href']:
-			magnet = extractMagnet('kickass',x['href'])
-			if magnet and magnet['href']:
-				link = Link()
-				link.url = magnet['href']
-				link.mirror = 'kickass.to'
-				return link
-		if 'katproxy' in x['href']:
-			magnet = extractMagnet('kickass',x['href'])
-			if magnet and magnet['href']:
-				link = Link()
-				link.url = magnet['href']
-				link.mirror = 'katproxy.com'
-				return link
-	return None
+	data = {'pagination':pagination,'urls':urllist}
+	return data
 
 def extractMagnet(site,x):
-	if site == '1337x':
-		r = requests.get(x)
-		soup = BeautifulSoup(r.text)
-		magnet = soup.find('a', attrs={'class':'magnetDw'})
-		return magnet
-	if site == 'kickass' or site == 'katproxy':
-		r = requests.get(x)
-		soup = BeautifulSoup(r.text)
-		magnet = soup.find('a', attrs={'class':'magnetlinkButton'})
-		return magnet
-
-def getTagCloud():
-	r = requests.get('http://torrentz.eu/i')
+	options = {
+		'1337x':'magnetDw',
+		'kickass':'magnetlinkButton',
+		'katproxy':'magnetlinkButton'
+	}
+	r = requests.get(x)
 	soup = BeautifulSoup(r.text)
-	dt = soup.findAll('div',attrs={'class':'cloud'})
-	urllist = []
-	for div in dt:
-		links = div.findAll('a')
-		for link in links:
-			lnk = TagCloudLink()
-			lnk.url = link['href'].rsplit('/',1)[1]
-			lnk.name = link.text
-			lnk.font_size = link['style']
-			urllist.append(lnk)
-	return urllist
+	magnet = soup.find('a', attrs={'class':options[site]})
+	return magnet
+
+def getPagination(soup, query=None):
+	div = soup.find('div',attrs={'class':'results'})
+	next = div.find('a',attrs={'rel':'next'})
+	prev = div.find('a',attrs={'rel':'prev'})
+	pagination_links = {'next':'','prev':''}
+	if next: pagination_links['next'] = getPaginationLink(query,next)
+	if prev: pagination_links['prev'] = getPaginationLink(query,prev)
+	return pagination_links
+
+def getPaginationLink(query, soup_part):
+	q = None
+	link = None
+	options = {
+		'verifiedP?':'/list/P',
+		'verifiedS?':'/list/S',
+		'verifiedD?':'/list/D',
+		'verifiedN?':'/list/N',
+		'search?f=added':'/recent',
+		'nested': {
+			'f=tv':'tv',
+			'f=movies':'movies',
+			'f=added':'added:7d'
+		}
+	}
+	page = soup_part['href'].rsplit('p=',1)[1]
+	if query and query != 'added:7d':
+		q = "f={0}".format(query)
+		options[q] = query
+	for option in options:
+		if option in soup_part['href']:
+			if options[option] == '/recent':
+				link = '/recent/'+page
+			elif q and option is q:
+				link = '/search/'+options[option]+'/'+page
+			else:
+				for optiontwo in options['nested']:
+					if optiontwo in soup_part['href']:
+						link = options[option]+'/'+options['nested'][optiontwo]+'/'+page
+	return link
 
 class TagCloudLink(object):
-	def __init__(self,url=None, name=None, font_size=None):
-		if url:
-			self.url = url
-		if name:
-			self.name = name
-		if font_size:
-			self.font_size = font_size
+	def __init__(self):
+		self.url = None
+		self.name = None
+		self.font_size = None
 
 class Link(object):
-	def __init__(self,url=None, mirror=None):
-		if url:
-			self.url = url
-		if mirror:
-			self.mirror = mirror
+	def __init__(self):
+		self.url = None
+		self.mirror = None
 
 class Torrent(object):
-	def __init__(self,url=None, torrenthash=None, title=None, mb=None, leechers=None, seeds=None):
-		if url:
-			self.url = url
-		if torrenthash:
-			self.torrenthash = torrenthash
-		if title:
-			self.title = title
-		if mb:
-			self.mb = mb
-		if leechers:
-			self.leechers = leechers
-		if seeds:
-			self.seeds = seeds
+	def __init__(self):
+		self.url = None
+		self.torrenthash = None
+		self.title = None
+		self.mb = None
+		self.leechers = None
+		self.seeds = None

@@ -15,6 +15,7 @@
     {% block search %}
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
+        
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -24,7 +25,9 @@
           </button>
           <a class="navbar-brand" href="{{ url_for('listBy') }}">t0rrents</a>
         </div>
+        
         <div class="navbar-collapse collapse">
+          
           <ul class="nav navbar-nav">
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sort <b class="caret"></b></a>
@@ -45,12 +48,14 @@
               </ul>
             </li>
           </ul>
+
           <form class="navbar-form navbar-right" role="search">
             <div class="form-group">
               <input type="text" class="form-control" placeholder="Search">
             </div>
             <button type="submit" class="btn btn-default">Search</button>
           </form>
+
         </div>
       </div>
     </div>
@@ -68,9 +73,12 @@
 
     <div class="container">
     <small>
-    Created by <a href="https://github.com/0xPr0xy">0xPr0xy</a>
+      Created by <a href="https://github.com/0xPr0xy">0xPr0xy</a>
      | Hosted by <a href="https://heroku.com">heroku</a>
-     | Powered by <a href="http://flask.pocoo.org/">flask</a>, <a href="http://docs.python-requests.org/en/latest/">requests</a>, <a href="http://www.crummy.com/software/BeautifulSoup/">beautifulsoup</a>, <a href="http://getbootstrap.com/">bootstrap3</a>
+     | Powered by <a href="http://flask.pocoo.org/">flask</a>, 
+     <a href="http://docs.python-requests.org/en/latest/">requests</a>, 
+     <a href="http://www.crummy.com/software/BeautifulSoup/">beautifulsoup</a>, 
+     <a href="http://getbootstrap.com/">bootstrap3</a>
     </small>
     </div><br>
 
