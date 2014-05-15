@@ -92,7 +92,7 @@ def getMagnetLink(h):
 		for option in options:
 			if option in x['href']:
 				magnet = extractMagnet(option,x['href'])
-				if magnet and magnet['href']:
+				if magnet:
 					link = Link()
 					link.url = magnet['href']
 					link.mirror = options[option]
@@ -147,13 +147,13 @@ def getPaginatedList(r,query):
 
 def extractMagnet(site,x):
 	options = {
-		'1337x':'magnetDw',
-		'kickass':'magnetlinkButton',
-		'katproxy':'magnetlinkButton'
+		'1337x':{'attr':'class','name':'magnetDw'},
+		'kickass':{'attr':'title','name':'Magnet link'},
+		'katproxy':{'attr':'title','name':'Magnet link'}
 	}
 	r = requests.get(x)
 	soup = BeautifulSoup(r.text)
-	magnet = soup.find('a', attrs={'class':options[site]})
+	magnet = soup.find('a', attrs={options[site]['attr']:options[site]['name']})
 	return magnet
 
 def getPagination(soup, query=None):
