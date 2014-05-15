@@ -29,6 +29,10 @@
 	<span class="badge alert-success hidden-sm hidden-xs">Seeds: {{url.seeds }}</span>
 	{% endif %}
 
+	{% if url.date %}
+	<span class="badge hidden-sm hidden-xs">{{url.date}}</span>
+	{% endif %}
+
 	{% if '1080p' in url.title %}
 	<span class="label label-success hidden-sm hidden-xs">1080p</span>
 	{% elif '720p' or 'HDTV' in url.title %}

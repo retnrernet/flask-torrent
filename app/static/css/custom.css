@@ -1,17 +1,30 @@
+html, body {
+	height:100%;
+}
 body {
 	padding-top: 70px;
 }
+.base, .cloud {
+	height:100%;
+}
 .cloud {
 	line-height: 1;
+}
+.download {
+	margin-bottom: auto;
+	margin-top:auto;
+	height: 100%;
 }
 .page-header {
 	margin:0px;
 	border:none;
 }
-
 .page-header h1 {
 	color:#777;
 }
 .list-group-item {
 	padding:5px 5px 5px 5px;
+}
+.footer {
+	padding-bottom:10px;
 }

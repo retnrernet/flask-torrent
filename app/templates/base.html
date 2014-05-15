@@ -11,7 +11,8 @@
   
   </head>
   <body>
-
+    <div class="container base">
+    
     {% block search %}
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
@@ -61,18 +62,13 @@
     </div>
     {% endblock %}
   	
-    <div class="container">
     {% block title %}
     {% endblock %}
-    </div>
 
-    <div class="container">
     {% block content %}
     {% endblock %}
-    </div>
 
-    <div class="container">
-    <small>
+    <small class="footer">
       Created by <a href="https://github.com/0xPr0xy">0xPr0xy</a>
      | Hosted by <a href="https://heroku.com">heroku</a>
      | Powered by <a href="http://flask.pocoo.org/">flask</a>, 
@@ -80,8 +76,8 @@
      <a href="http://www.crummy.com/software/BeautifulSoup/">beautifulsoup</a>, 
      <a href="http://getbootstrap.com/">bootstrap3</a>
     </small>
-    </div><br>
-
+    
+    </div>
   	<script src="http://code.jquery.com/jquery.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   	<script src="/static/js/custom.js"></script>

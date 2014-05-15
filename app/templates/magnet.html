@@ -10,11 +10,13 @@
 {% endblock %}
 
 {% block content %}
+<div class="download">
 {% if link is defined and link is not none %}
 	<a href='{{ link.url }}' class="btn btn-primary">download from {{ link.mirror }} </a>
 {% else %}
 	<p>Unable to find a magnet link</p>
 {% endif %}
+</div>
 {% endblock %}
 
 {% block script %}

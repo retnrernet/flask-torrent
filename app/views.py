@@ -125,19 +125,22 @@ def getPaginatedList(r,query):
 		if a and len(a['href']) > 40 and a.text:
 			dd = dl.find('dd')
 			if dd:
-				mb = dd.find('span', attrs={'class':'s'})
-				seeds = dd.find('span', attrs={'class':'u'})
-				leechers = dd.find('span', attrs={'class':'d'})
+				mb = dd.find('span', attrs={'class':'s'}).string
+				seeds = dd.find('span', attrs={'class':'u'}).string
+				leechers = dd.find('span', attrs={'class':'d'}).string
+				date = dd.find('span', attrs={'class':'a'}).find('span').string
 				tor = Torrent()
 				tor.url = 'http://torrentz.eu'
 				tor.torrenthash = a['href']
 				tor.title = a.text
-				if mb and mb.string:
-					tor.mb = mb.string
-				if seeds and seeds.string:
-					tor.seeds = seeds.string
-				if leechers and leechers.string:
-					tor.leechers = leechers.string
+				if date:
+					tor.date = date
+				if mb:
+					tor.mb = mb
+				if seeds:
+					tor.seeds = seeds
+				if leechers:
+					tor.leechers = leechers
 				urllist.append(tor)
 	data = {'pagination':pagination,'urls':urllist}
 	return data
@@ -212,3 +215,4 @@ class Torrent(object):
 		self.mb = None
 		self.leechers = None
 		self.seeds = None
+		self.date = None
