@@ -168,6 +168,7 @@ def getPagination(soup, query=None):
 def getPaginationLink(query, soup_part):
 	q = None
 	link = None
+	
 	options = {
 		'verifiedP?':'/list/P',
 		'verifiedS?':'/list/S',
@@ -180,6 +181,7 @@ def getPaginationLink(query, soup_part):
 			'f=added':'added:7d'
 		}
 	}
+
 	page = soup_part['href'].rsplit('p=',1)[1]
 	if query and query != 'added:7d':
 		q = "f={0}".format(query)
