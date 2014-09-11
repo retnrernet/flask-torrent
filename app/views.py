@@ -50,16 +50,22 @@ def cloud():
 		title='Tag Cloud'
 	)
 
+def getHeaders():
+	headers = {
+		'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
+	}
+	return headers
+
 def listTorrents(peer_seeds=None, tv_movies=None, query=None, page=None):
 	if peer_seeds and tv_movies and not page:
-		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies)
+		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies,headers=getHeaders())
 	elif peer_seeds and tv_movies and page:
-		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies+'&p='+page)
+		r = requests.get('http://torrentz.eu/verified'+peer_seeds+'?f='+tv_movies+'&p='+page,headers=getHeaders())
 		print r.url
 	elif query and not page:
-		r = requests.get('http://torrentz.eu/search?f='+query)
+		r = requests.get('http://torrentz.eu/search?f='+query,headers=getHeaders())
 	elif query and page:
-		r = requests.get('http://torrentz.eu/search?f='+query+'&p='+page)
+		r = requests.get('http://torrentz.eu/search?f='+query+'&p='+page,headers=getHeaders())
 	else: return []
 	data = getPaginatedList(r,query)
 	return data
@@ -100,7 +106,7 @@ def getMagnetLink(h):
 	return None
 
 def getTagCloud():
-	r = requests.get('http://torrentz.eu/i')
+	r = requests.get('http://torrentz.eu/i', headers=getHeaders())
 	soup = BeautifulSoup(r.text)
 	dt = soup.find('div',attrs={'class':'cloud'})
 	urllist = []
@@ -115,6 +121,7 @@ def getTagCloud():
 
 def getPaginatedList(r,query):
 	urllist = []
+	print r.request.headers
 	soup = BeautifulSoup(r.text)
 	if query:
 		pagination = getPagination(soup,query)
@@ -158,8 +165,8 @@ def extractMagnet(site,x):
 
 def getPagination(soup, query=None):
 	div = soup.find('div',attrs={'class':'results'})
-	next = div.find('a',attrs={'rel':'next'})
-	prev = div.find('a',attrs={'rel':'prev'})
+	next = div.find('a',attrs={'string':'next'})
+	prev = div.find('a',attrs={'string':'prev'})
 	pagination_links = {'next':'','prev':''}
 	if next: pagination_links['next'] = getPaginationLink(query,next)
 	if prev: pagination_links['prev'] = getPaginationLink(query,prev)
