@@ -91,7 +91,7 @@ def getMagnetLink(h):
 		'kickass':'kickass.to',
 		'katproxy':'katproxy.com'
 	}
-	r = requests.get('http://torrentz.eu/'+h)
+	r = requests.get('http://torrentz.eu/'+h, headers=getHeaders())
 	soup = BeautifulSoup(r.text)
 	dt = soup.findAll('a', attrs={'rel':'e'})
 	for x in dt:
@@ -165,8 +165,14 @@ def extractMagnet(site,x):
 
 def getPagination(soup, query=None):
 	div = soup.find('div',attrs={'class':'results'})
-	next = div.find('a',attrs={'string':'next'})
-	prev = div.find('a',attrs={'string':'prev'})
+	p = div.find('p')
+	span = p.find('span')
+	links = span.findAll('a')
+	lastindex = len(links) - 1
+	next = None
+	prev = None
+	if 'p=' in links[1]['href']: prev = links[1]
+	if 'p=' in links[lastindex]['href']: next = links[lastindex]
 	pagination_links = {'next':'','prev':''}
 	if next: pagination_links['next'] = getPaginationLink(query,next)
 	if prev: pagination_links['prev'] = getPaginationLink(query,prev)
