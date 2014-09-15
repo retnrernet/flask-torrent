@@ -175,9 +175,7 @@ def extractMagnet(site,x):
 
 def getPagination(soup, query=None):
 	div = soup.find('div',attrs={'class':'results'})
-	p = div.find('p')
-	span = p.find('span')
-	links = span.findAll('a')
+	links = div.findAll('a')
 	lastindex = len(links) - 1
 	next = None
 	prev = None
