@@ -1,5 +1,4 @@
 from app import app, render_template
-import os
 import requests
 from BeautifulSoup import BeautifulSoup
 
@@ -67,6 +66,9 @@ def listTorrents(peer_seeds=None, tv_movies=None, query=None, page=None):
 	elif query and page:
 		r = requests.get('http://torrentz.eu/search?f='+query+'&p='+page,headers=getHeaders())
 	else: return []
+
+	print 'listTorrents - %f' % r.elapsed.total_seconds()
+	
 	data = getPaginatedList(r,query)
 	return data
 
@@ -92,6 +94,9 @@ def getMagnetLink(h):
 		'katproxy':'katproxy.com'
 	}
 	r = requests.get('http://torrentz.eu/'+h, headers=getHeaders())
+
+	print 'getMagnetLink - %f' % r.elapsed.total_seconds()
+
 	soup = BeautifulSoup(r.text)
 	dt = soup.findAll('a', attrs={'rel':'e'})
 	for x in dt:
@@ -107,6 +112,9 @@ def getMagnetLink(h):
 
 def getTagCloud():
 	r = requests.get('http://torrentz.eu/i', headers=getHeaders())
+
+	print 'getTagCloud - %f' % r.elapsed.total_seconds()
+
 	soup = BeautifulSoup(r.text)
 	dt = soup.find('div',attrs={'class':'cloud'})
 	urllist = []
@@ -121,7 +129,6 @@ def getTagCloud():
 
 def getPaginatedList(r,query):
 	urllist = []
-	print r.request.headers
 	soup = BeautifulSoup(r.text)
 	if query:
 		pagination = getPagination(soup,query)
@@ -159,6 +166,9 @@ def extractMagnet(site,x):
 		'katproxy':{'attr':'title','name':'Magnet link'}
 	}
 	r = requests.get(x)
+
+	print 'extractMagnet - %f' % r.elapsed.total_seconds()
+	
 	soup = BeautifulSoup(r.text)
 	magnet = soup.find('a', attrs={options[site]['attr']:options[site]['name']})
 	return magnet
